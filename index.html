@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Onko Meillä Split?</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scene">
+    <div class="sky"></div>
+    <svg class="mountains mountains--back" viewBox="0 0 360 200" preserveAspectRatio="none">
+      <polygon points="0,200 0,120 40,70 80,110 120,50 170,100 210,60 250,105 300,75 360,130 360,200" />
+    </svg>
+    <svg class="mountains mountains--front" viewBox="0 0 360 200" preserveAspectRatio="none">
+      <polygon points="0,200 0,150 50,100 90,140 140,90 190,145 230,110 280,150 320,120 360,160 360,200" />
+    </svg>
+    <div class="water"></div>
+
+    <main class="card">
+      <h1 class="title">Onko Meillä Split?</h1>
+      <p class="subtitle">11.15-12.55 oppitunti</p>
+
+      <div class="selector-row">
+        <button id="prevDay" class="arrow" aria-label="Edellinen päivä">&lt;</button>
+        <select id="courseSelect" class="course-select">
+          <option value="" disabled selected>Valitse kurssi</option>
+        </select>
+        <button id="nextDay" class="arrow" aria-label="Seuraava päivä">&gt;</button>
+      </div>
+
+      <p id="dayLabel" class="day-label">&nbsp;</p>
+
+      <button id="searchBtn" class="search-btn">ETSI</button>
+
+      <p id="result" class="result">?</p>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
