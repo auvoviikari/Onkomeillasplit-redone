@@ -1873,6 +1873,26 @@ var DATA = [
   var searchBtn = document.getElementById("searchBtn");
   var resultEl = document.getElementById("result");
 
+  var STORAGE_KEY = "onkomeillasplit:selectedCourseByDay";
+
+  function loadSelections() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveSelection(day, course) {
+    try {
+      var selections = loadSelections();
+      selections[day] = course;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(selections));
+    } catch (e) {
+      // localStorage unavailable (e.g. private browsing) - ignore.
+    }
+  }
+
   function toDate(iso) {
     var parts = iso.split("-");
     return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
@@ -1931,7 +1951,7 @@ var DATA = [
     placeholder.selected = true;
     courseSelect.appendChild(placeholder);
 
-    if (!period) return;
+    if (!period) return false;
 
     var day = DAY_ORDER[dayIndex];
     var courses = []
@@ -1947,6 +1967,13 @@ var DATA = [
       opt.textContent = courses[i];
       courseSelect.appendChild(opt);
     }
+
+    var saved = loadSelections()[day];
+    if (saved && courses.indexOf(saved) !== -1) {
+      courseSelect.value = saved;
+      return true;
+    }
+    return false;
   }
 
   function renderDayLabel() {
@@ -1980,23 +2007,32 @@ var DATA = [
     }
   }
 
-  prevBtn.addEventListener("click", function () {
-    dayIndex = (dayIndex + DAY_ORDER.length - 1) % DAY_ORDER.length;
+  function goToDay(newIndex) {
+    dayIndex = newIndex;
     renderDayLabel();
-    populateDropdown();
-    resetResult();
+    var restored = populateDropdown();
+    if (restored) {
+      search();
+    } else {
+      resetResult();
+    }
+  }
+
+  prevBtn.addEventListener("click", function () {
+    goToDay((dayIndex + DAY_ORDER.length - 1) % DAY_ORDER.length);
   });
 
   nextBtn.addEventListener("click", function () {
-    dayIndex = (dayIndex + 1) % DAY_ORDER.length;
-    renderDayLabel();
-    populateDropdown();
-    resetResult();
+    goToDay((dayIndex + 1) % DAY_ORDER.length);
+  });
+
+  courseSelect.addEventListener("change", function () {
+    if (courseSelect.value) {
+      saveSelection(DAY_ORDER[dayIndex], courseSelect.value);
+    }
   });
 
   searchBtn.addEventListener("click", search);
 
-  renderDayLabel();
-  populateDropdown();
-  resetResult();
+  goToDay(dayIndex);
 })();
